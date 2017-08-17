@@ -2,7 +2,7 @@
     "version": "1.0.0",
     "summary": "Typed dropdown examples",
     "repository": "https://github.com/fedragon/elm-typed-dropdown.git",
-    "license": "MIT",
+    "license": "BSD3",
     "source-directories": [
         ".",
         "../src",
