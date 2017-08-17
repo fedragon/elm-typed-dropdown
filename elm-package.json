@@ -1,0 +1,18 @@
+{
+    "version": "1.0.0",
+    "summary": "Dropdown that can deal with items of an arbitrary type `t`",
+    "repository": "https://github.com/fedragon/elm-typed-dropdown.git",
+    "license": "MIT",
+    "source-directories": [
+        "src"
+    ],
+    "exposed-modules": [
+        "Dropdown"
+    ],
+    "dependencies": {
+        "elm-community/maybe-extra": "4.0.0 <= v < 5.0.0",
+        "elm-lang/core": "5.1.1 <= v < 6.0.0",
+        "elm-lang/html": "2.0.0 <= v < 3.0.0"
+    },
+    "elm-version": "0.18.0 <= v < 0.19.0"
+}
