@@ -1,6 +1,6 @@
 {
-    "version": "1.0.0",
-    "summary": "Dropdown that can deal with items of an arbitrary type `t`",
+    "version": "1.1.0",
+    "summary": "Dropdown that handles items of an arbitrary type `t`",
     "repository": "https://github.com/fedragon/elm-typed-dropdown.git",
     "license": "BSD3",
     "source-directories": [

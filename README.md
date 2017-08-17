@@ -10,6 +10,7 @@ It sets the selected item by value, rather than by index, which can be useful wh
 - Items not part of internal model
 - Item selected by value, rather than by index
 - User selection communicated via events
+- Customizable style
 
 ## Usage
 

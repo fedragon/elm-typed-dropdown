@@ -1,11 +1,14 @@
 module Dropdown
     exposing
-        ( init
-        , update
-        , view
-        , Dropdown
+        ( Dropdown
         , Event(..)
         , Msg
+        , Settings
+        , defaultSettings
+        , init
+        , initWithSettings
+        , update
+        , view
         )
 
 {-| This library provides a dropdown that can deal with items of any type `t`.
@@ -18,12 +21,12 @@ an Event that contains the selected item.
 
 # Types
 
-@docs Dropdown, Event, Msg
+@docs Dropdown, Event, Msg, Settings
 
 
 # Functions
 
-@docs init, update, view
+@docs defaultSettings, init, initWithSettings, update, view
 
 -}
 
@@ -34,6 +37,54 @@ import Json.Decode
 import Maybe.Extra
 
 
+{-|
+
+@docs Opaque type representing messages used to change internal state.
+
+-}
+type Msg t
+    = Toggle State
+    | Select t
+
+
+{-|
+
+@docs Events that are used to communicate changes in state relevant to
+users of this component.
+
+-}
+type Event t
+    = Unchanged
+    | ItemSelected t
+
+
+{-|
+
+@docs The Dropdown (opaque) model.
+
+-}
+type Dropdown
+    = Dropdown Model
+
+
+{-|
+
+@docs Customization settings.
+
+-}
+type alias Settings =
+    { placeHolder : String
+    , closedClass : String
+    , openedClass : String
+    , menuClass : String
+    , buttonClass : String
+    , arrowUpClass : String
+    , arrowDownClass : String
+    , itemClass : String
+    , activeItemClass : String
+    }
+
+
 {-| Internal state.
 -}
 type State
@@ -41,43 +92,65 @@ type State
     | Closed
 
 
-{-| @docs Opaque type representing messages used to change internal state.
--}
-type Msg t
-    = Toggle State
-    | Select t
-
-
-{-| @docs Events that are used to communicate changes in state relevant to
-users of this component.
--}
-type Event t
-    = Unchanged
-    | ItemSelected t
-
-
 {-| Internal model.
 -}
 type alias Model =
-    { state : State }
+    { settings : Settings
+    , state : State
+    }
 
 
-{-| @docs The Dropdown (opaque) model.
--}
-type Dropdown
-    = Dropdown Model
+{-|
 
+@docs Initialize a Dropdown with default settings.
 
-{-| @docs Initialize a Dropdown.
 -}
 init : Dropdown
 init =
-    Dropdown { state = Closed }
+    Dropdown
+        { settings = defaultSettings
+        , state = Closed
+        }
 
 
-{-| @docs Update a Dropdown. Returns the updated Dropdown and an Event
+{-|
+
+@docs Initialize a Dropdown with custom settings.
+
+-}
+initWithSettings : Settings -> Dropdown
+initWithSettings settings =
+    Dropdown
+        { settings = settings
+        , state = Closed
+        }
+
+
+{-|
+
+@docs Default look and feel settings.
+
+-}
+defaultSettings : Settings
+defaultSettings =
+    { placeHolder = "Select ..."
+    , closedClass = "dropdown"
+    , openedClass = "dropdown open"
+    , menuClass = "dropdown-menu"
+    , buttonClass = "button-as-dropdown dropdown-toggle form-control"
+    , arrowUpClass = "arrow glyphicon glyphicon-triangle-top"
+    , arrowDownClass = "arrow glyphicon glyphicon-triangle-bottom"
+    , itemClass = ""
+    , activeItemClass = "active"
+    }
+
+
+{-|
+
+@docs Update a Dropdown. Returns the updated Dropdown and an Event
 that communicates changes that are relevant to the outside world, if
 any (e.g. item selection).
+
 -}
 update : Dropdown -> Msg t -> ( Dropdown, Event t )
 update (Dropdown model) msg =
@@ -93,19 +166,22 @@ update (Dropdown model) msg =
             )
 
 
-{-| @docs Render a Dropdown using provided items, optional selected item, and
+{-|
+
+@docs Render a Dropdown using provided items, optional selected item, and
 function that returns a string representation of an item.
+
 -}
 view : Dropdown -> List t -> Maybe t -> (t -> String) -> Html (Msg t)
-view (Dropdown model) items selectedItem descriptionOf =
+view (Dropdown { settings, state }) items selectedItem descriptionOf =
     let
         ( clazz, newState, arrow ) =
-            case model.state of
+            case state of
                 Closed ->
-                    ( "dropdown", Opened, "glyphicon-triangle-bottom" )
+                    ( settings.closedClass, Opened, settings.arrowDownClass )
 
                 Opened ->
-                    ( "dropdown open", Closed, "glyphicon-triangle-top" )
+                    ( settings.openedClass, Closed, settings.arrowUpClass )
 
         isActive item =
             case selectedItem of
@@ -116,32 +192,38 @@ view (Dropdown model) items selectedItem descriptionOf =
                     False
 
         menuItems =
-            (List.map
+            List.map
                 (\item ->
                     viewItem
                         item
                         descriptionOf
                         (isActive item)
+                        settings.itemClass
+                        settings.activeItemClass
                 )
                 items
-            )
     in
-        div
-            [ class clazz ]
-            [ button
-                [ class "button-as-dropdown dropdown-toggle form-control"
-                , onClick (Toggle newState)
-                , onBlur (Toggle Closed)
-                ]
-                [ text (Maybe.Extra.unwrap "Select ..." descriptionOf selectedItem)
-                , span [ class ("arrow glyphicon " ++ arrow) ] []
-                ]
-            , ul
-                [ class "dropdown-menu"
-                , onBlur (Toggle Closed)
-                ]
-                (menuItems)
+    div
+        [ class clazz ]
+        [ button
+            [ class settings.buttonClass
+            , onClick (Toggle newState)
+            , onBlur (Toggle Closed)
             ]
+            [ text
+                (Maybe.Extra.unwrap
+                    settings.placeHolder
+                    descriptionOf
+                    selectedItem
+                )
+            , span [ class arrow ] []
+            ]
+        , ul
+            [ class settings.menuClass
+            , onBlur (Toggle Closed)
+            ]
+            menuItems
+        ]
 
 
 onItem : String -> msg -> Html.Attribute msg
@@ -153,18 +235,18 @@ onItem ev =
             }
 
 
-viewItem : t -> (t -> String) -> Bool -> Html (Msg t)
-viewItem item descriptionOf active =
+viewItem : t -> (t -> String) -> Bool -> String -> String -> Html (Msg t)
+viewItem item descriptionOf active itemClass activeItemClass =
     let
         attrs =
             if active then
-                [ class "active" ]
+                [ class activeItemClass ]
             else
-                []
+                [ class itemClass ]
     in
-        li
-            (attrs)
-            [ a
-                [ onItem "mousedown" (Select item) ]
-                [ text (descriptionOf item) ]
-            ]
+    li
+        attrs
+        [ a
+            [ onItem "mousedown" (Select item) ]
+            [ text (descriptionOf item) ]
+        ]
