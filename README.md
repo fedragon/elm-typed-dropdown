@@ -16,7 +16,7 @@ It sets the selected item by value, rather than by index, which can be useful wh
 
 The `Dropdown.init` function initializes and returns a dropdown with default style settings (use `initWithSettings` if you want to customize its look and feel).
 
-```
+```elm
 import Dropdown exposing (Dropdown, Event(ItemSelected))
 
 -- type of items in this dropdown
