@@ -7,12 +7,80 @@ It sets the selected item by value, rather than by index, which can be useful wh
 ## Features
 
 - Items can be of any type `t`
-- Items not part of internal model
+- Items are not part of internal component model
 - Item selected by value, rather than by index
-- User selection communicated via events
-- Customizable style
+- User selection communicated via `Event`
+- Style can be customized by providing `Settings`
 
 ## Usage
+
+The `Dropdown.init` function initializes and returns a dropdown with default style settings (use `initWithSettings` if you want to customize its look and feel).
+
+```
+import Dropdown exposing (Dropdown, Event(ItemSelected))
+
+-- type of items in this dropdown
+type alias Country =
+    { code : String
+    , name : String
+    }
+
+
+type alias Model =
+    { dropdown : Dropdown
+    , items : List Country -- items that will be shown in dropdown
+    , selectedItem : Maybe Country -- selected item, if any
+    , ...
+    }
+
+
+type Msg
+    = CountrySelected (Dropdown.Msg Country)
+    | ...
+
+
+init =
+    Model
+        Dropdown.init
+        [ Country "ALB" "Albania"
+        , Country "ITA" "Italy"
+        , Country "NLD" "Netherlands"
+        ]
+        Nothing
+        ...
+
+
+update msg model =
+    case msg of
+        CountrySelected dropdownMsg ->
+            let
+                ( updatedDropdown, event ) =
+                    Dropdown.update model.dropdown dropdownMsg
+            in
+                case event of
+                    ItemSelected country ->
+                        { model
+                            | dropdown = updatedDropdown
+                            , selectedItem = Just country
+                        }
+
+                    _ ->
+                        { model | dropdown = updatedDropdown }
+        ...
+
+
+view model =
+    ...
+        , div [ ]
+            [ Html.map CountrySelected <|
+                Dropdown.view
+                    model.dropdown
+                    model.items
+                    model.selectedItem
+                    .name
+            ]
+        ]
+```
 
 See `examples` folder for complete usage examples.
 

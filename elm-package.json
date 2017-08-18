@@ -1,5 +1,5 @@
 {
-    "version": "1.1.0",
+    "version": "1.1.1",
     "summary": "Dropdown that handles items of an arbitrary type `t`",
     "repository": "https://github.com/fedragon/elm-typed-dropdown.git",
     "license": "BSD3",
@@ -10,7 +10,6 @@
         "Dropdown"
     ],
     "dependencies": {
-        "elm-community/maybe-extra": "4.0.0 <= v < 5.0.0",
         "elm-lang/core": "5.1.1 <= v < 6.0.0",
         "elm-lang/html": "2.0.0 <= v < 3.0.0"
     },

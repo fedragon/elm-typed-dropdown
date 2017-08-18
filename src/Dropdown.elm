@@ -11,7 +11,7 @@ module Dropdown
         , view
         )
 
-{-| This library provides a dropdown that can deal with items of any type `t`.
+{-| This library provides a dropdown that handles items of any type `t`.
 Items are not part of this component's internal model, meaning that there is a
 single source of truth: your own `Model`.
 It sets the selected item by value, rather than by index, which can be useful
@@ -34,7 +34,6 @@ import Html exposing (Html, a, button, div, li, span, text, ul)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onBlur, onClick, onWithOptions)
 import Json.Decode
-import Maybe.Extra
 
 
 {-|
@@ -211,10 +210,12 @@ view (Dropdown { settings, state }) items selectedItem descriptionOf =
             , onBlur (Toggle Closed)
             ]
             [ text
-                (Maybe.Extra.unwrap
+                (Maybe.withDefault
                     settings.placeHolder
-                    descriptionOf
-                    selectedItem
+                    (Maybe.map
+                        descriptionOf
+                        selectedItem
+                    )
                 )
             , span [ class arrow ] []
             ]
