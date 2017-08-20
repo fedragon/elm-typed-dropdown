@@ -34,6 +34,7 @@ init =
         Nothing
 
 
+main : Program Never Model Msg
 main =
     Html.beginnerProgram
         { model = init
@@ -48,17 +49,17 @@ update msg model =
         CountrySelected dropdownMsg ->
             let
                 ( updatedDropdown, event ) =
-                    Dropdown.update model.dropdown dropdownMsg
+                    Dropdown.update dropdownMsg model.dropdown
             in
-                case event of
-                    ItemSelected country ->
-                        { model
-                            | dropdown = updatedDropdown
-                            , selectedCountry = Just country
-                        }
+            case event of
+                ItemSelected country ->
+                    { model
+                        | dropdown = updatedDropdown
+                        , selectedCountry = Just country
+                    }
 
-                    _ ->
-                        { model | dropdown = updatedDropdown }
+                _ ->
+                    { model | dropdown = updatedDropdown }
 
 
 view : Model -> Html Msg
@@ -85,16 +86,16 @@ view model =
                 model.selectedCountry
                 |> Maybe.withDefault "-"
     in
-        div [ class "col-md-9 col-lg-9" ]
-            [ h1 [] [ text "Select a country" ]
-            , h3 [] [ text ("Selected: " ++ selected) ]
-            , div [ class "col-md-3 col-lg-3" ]
-                [ Css.style [ Html.Attributes.scoped True ] stylesheet
-                , Html.map CountrySelected <|
-                    Dropdown.view
-                        model.dropdown
-                        model.countries
-                        model.selectedCountry
-                        .name
-                ]
+    div [ class "col-md-9 col-lg-9" ]
+        [ h1 [] [ text "Select a country" ]
+        , h3 [] [ text ("Selected: " ++ selected) ]
+        , div [ class "col-md-3 col-lg-3" ]
+            [ Css.style [ Html.Attributes.scoped True ] stylesheet
+            , Html.map CountrySelected <|
+                Dropdown.view
+                    model.countries
+                    model.selectedCountry
+                    .name
+                    model.dropdown
             ]
+        ]
