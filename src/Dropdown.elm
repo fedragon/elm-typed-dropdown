@@ -151,8 +151,8 @@ that communicates changes that are relevant to the outside world, if
 any (e.g. item selection).
 
 -}
-update : Dropdown -> Msg t -> ( Dropdown, Event t )
-update (Dropdown model) msg =
+update : Msg t -> Dropdown -> ( Dropdown, Event t )
+update msg (Dropdown model) =
     case msg of
         Toggle state ->
             ( Dropdown { model | state = state }
@@ -171,8 +171,8 @@ update (Dropdown model) msg =
 function that returns a string representation of an item.
 
 -}
-view : Dropdown -> List t -> Maybe t -> (t -> String) -> Html (Msg t)
-view (Dropdown { settings, state }) items selectedItem descriptionOf =
+view : List t -> Maybe t -> (t -> String) -> Dropdown -> Html (Msg t)
+view items selectedItem descriptionOf (Dropdown { settings, state }) =
     let
         ( clazz, newState, arrow ) =
             case state of

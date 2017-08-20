@@ -14,8 +14,6 @@ It sets the selected item by value, rather than by index, which can be useful wh
 
 ## Usage
 
-The `Dropdown.init` function initializes and returns a dropdown with default style settings (use `initWithSettings` if you want to customize its look and feel).
-
 ```elm
 import Dropdown exposing (Dropdown, Event(ItemSelected))
 
@@ -55,7 +53,7 @@ update msg model =
         CountrySelected dropdownMsg ->
             let
                 ( updatedDropdown, event ) =
-                    Dropdown.update model.dropdown dropdownMsg
+                    Dropdown.update dropdownMsg model.dropdown
             in
                 case event of
                     ItemSelected country ->
@@ -71,18 +69,22 @@ update msg model =
 
 view model =
     ...
-        , div [ ]
+        , div []
             [ Html.map CountrySelected <|
                 Dropdown.view
-                    model.dropdown
                     model.items
                     model.selectedItem
                     .name
+                    model.dropdown
             ]
         ]
 ```
 
-See `examples` folder for complete usage examples.
+See `examples` folder for complete usage examples. You can find the minimal set of styles that should be applied to the dropdown in provided `dropdown.css`.
+
+### Customize style
+
+Use `Dropdown.initWithSettings` rather than `init` if you want to use your own styles rather than the default ones.
 
 ## Credits
 
