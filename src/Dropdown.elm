@@ -36,40 +36,28 @@ import Html.Events exposing (onBlur, onClick, onWithOptions)
 import Json.Decode
 
 
-{-|
-
-@docs Opaque type representing messages used to change internal state.
-
+{-| @docs Opaque type representing messages used to change internal state.
 -}
 type Msg t
     = Toggle State
     | Select t
 
 
-{-|
-
-@docs Events that are used to communicate changes in state relevant to
+{-| @docs Events that are used to communicate changes in state relevant to
 users of this component.
-
 -}
 type Event t
     = Unchanged
     | ItemSelected t
 
 
-{-|
-
-@docs The Dropdown (opaque) model.
-
+{-| @docs The Dropdown (opaque) model.
 -}
 type Dropdown
     = Dropdown Model
 
 
-{-|
-
-@docs Customization settings.
-
+{-| @docs Customization settings.
 -}
 type alias Settings =
     { placeHolder : String
@@ -99,10 +87,7 @@ type alias Model =
     }
 
 
-{-|
-
-@docs Initialize a Dropdown with default settings.
-
+{-| @docs Initialize a Dropdown with default settings.
 -}
 init : Dropdown
 init =
@@ -112,10 +97,7 @@ init =
         }
 
 
-{-|
-
-@docs Initialize a Dropdown with custom settings.
-
+{-| @docs Initialize a Dropdown with custom settings.
 -}
 initWithSettings : Settings -> Dropdown
 initWithSettings settings =
@@ -125,10 +107,7 @@ initWithSettings settings =
         }
 
 
-{-|
-
-@docs Default look and feel settings.
-
+{-| @docs Default look and feel settings.
 -}
 defaultSettings : Settings
 defaultSettings =
@@ -144,12 +123,19 @@ defaultSettings =
     }
 
 
-{-|
+toggle : State -> State
+toggle state =
+    case state of
+        Opened ->
+            Closed
 
-@docs Update a Dropdown. Returns the updated Dropdown and an Event
+        Closed ->
+            Opened
+
+
+{-| @docs Update a Dropdown. Returns the updated Dropdown and an Event
 that communicates changes that are relevant to the outside world, if
 any (e.g. item selection).
-
 -}
 update : Msg t -> Dropdown -> ( Dropdown, Event t )
 update msg (Dropdown model) =
@@ -160,16 +146,13 @@ update msg (Dropdown model) =
             )
 
         Select item ->
-            ( Dropdown model
+            ( Dropdown { model | state = toggle model.state }
             , ItemSelected item
             )
 
 
-{-|
-
-@docs Render a Dropdown using provided items, optional selected item, and
+{-| @docs Render a Dropdown using provided items, optional selected item, and
 function that returns a string representation of an item.
-
 -}
 view : List t -> Maybe t -> (t -> String) -> Dropdown -> Html (Msg t)
 view items selectedItem descriptionOf (Dropdown { settings, state }) =
@@ -202,29 +185,25 @@ view items selectedItem descriptionOf (Dropdown { settings, state }) =
                 )
                 items
     in
-    div
-        [ class clazz ]
-        [ button
-            [ class settings.buttonClass
-            , onClick (Toggle newState)
-            , onBlur (Toggle Closed)
-            ]
-            [ text
-                (Maybe.withDefault
-                    settings.placeHolder
-                    (Maybe.map
-                        descriptionOf
-                        selectedItem
+        div
+            [ class clazz ]
+            [ button
+                [ class settings.buttonClass
+                , onClick (Toggle newState)
+                , onBlur (Toggle Closed)
+                ]
+                [ text
+                    (selectedItem
+                        |> Maybe.map descriptionOf
+                        |> Maybe.withDefault settings.placeHolder
                     )
-                )
-            , span [ class arrow ] []
+                , span [ class arrow ] []
+                ]
+            , ul
+                [ class settings.menuClass
+                ]
+                menuItems
             ]
-        , ul
-            [ class settings.menuClass
-            , onBlur (Toggle Closed)
-            ]
-            menuItems
-        ]
 
 
 onItem : String -> msg -> Html.Attribute msg
@@ -245,9 +224,9 @@ viewItem item descriptionOf active itemClass activeItemClass =
             else
                 [ class itemClass ]
     in
-    li
-        attrs
-        [ a
-            [ onItem "mousedown" (Select item) ]
-            [ text (descriptionOf item) ]
-        ]
+        li
+            attrs
+            [ a
+                [ onItem "mousedown" (Select item) ]
+                [ text (descriptionOf item) ]
+            ]
