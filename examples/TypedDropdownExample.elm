@@ -1,9 +1,9 @@
 module Example exposing (..)
 
 import Css
-import Dropdown exposing (Dropdown, Event(ItemSelected))
 import Html exposing (Html, div, h1, h3, text)
 import Html.Attributes exposing (class)
+import TypedDropdown exposing (Event(ItemSelected), TypedDropdown)
 
 
 type alias Country =
@@ -13,20 +13,20 @@ type alias Country =
 
 
 type alias Model =
-    { dropdown : Dropdown
+    { dropdown : TypedDropdown
     , countries : List Country
     , selectedCountry : Maybe Country
     }
 
 
 type Msg
-    = CountrySelected (Dropdown.Msg Country)
+    = CountrySelected (TypedDropdown.Msg Country)
 
 
 init : Model
 init =
     Model
-        Dropdown.init
+        TypedDropdown.init
         [ Country "ALB" "Albania"
         , Country "ITA" "Italy"
         , Country "NLD" "Netherlands"
@@ -49,7 +49,7 @@ update msg model =
         CountrySelected dropdownMsg ->
             let
                 ( updatedDropdown, event ) =
-                    Dropdown.update dropdownMsg model.dropdown
+                    TypedDropdown.update dropdownMsg model.dropdown
             in
             case event of
                 ItemSelected country ->
@@ -92,7 +92,7 @@ view model =
         , div [ class "col-md-3 col-lg-3" ]
             [ Css.style [ Html.Attributes.scoped True ] stylesheet
             , Html.map CountrySelected <|
-                Dropdown.view
+                TypedDropdown.view
                     model.countries
                     model.selectedCountry
                     .name

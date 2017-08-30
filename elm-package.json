@@ -1,13 +1,14 @@
 {
-    "version": "2.0.1",
-    "summary": "Dropdown that handles items of an arbitrary type `t`",
-    "repository": "https://github.com/fedragon/elm-typed-dropdown.git",
+    "version": "1.0.0",
+    "summary": "Ready-made dropdowns",
+    "repository": "https://github.com/fedragon/elm-dropdowns.git",
     "license": "BSD3",
     "source-directories": [
         "src"
     ],
     "exposed-modules": [
-        "Dropdown"
+        "LinksDropdown",
+        "TypedDropdown"
     ],
     "dependencies": {
         "elm-lang/core": "5.1.1 <= v < 6.0.0",

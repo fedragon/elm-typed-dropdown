@@ -1,16 +1,17 @@
 {
-    "version": "1.1.0",
-    "summary": "Typed Dropdown examples",
-    "repository": "https://github.com/fedragon/elm-typed-dropdown.git",
+    "version": "1.0.0",
+    "summary": "Examples",
+    "repository": "https://github.com/fedragon/elm-dropdowns.git",
     "license": "BSD3",
     "source-directories": [
-        "."
+        ".",
+        "../src"
     ],
     "exposed-modules": [],
     "dependencies": {
         "elm-lang/core": "5.1.1 <= v < 6.0.0",
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
-        "fedragon/elm-typed-dropdown": "2.0.1 <= v < 3.0.0",
+        "fedragon/elm-dropdowns": "1.0.0 <= v < 2.0.0",
         "massung/elm-css": "1.1.1 <= v < 2.0.0"
     },
     "elm-version": "0.18.0 <= v < 0.19.0"
