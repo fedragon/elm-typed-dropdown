@@ -1,15 +1,7 @@
-module Dropdown
-    exposing
-        ( Dropdown
-        , Event(..)
-        , Msg
-        , Settings
-        , defaultSettings
-        , init
-        , initWithSettings
-        , update
-        , view
-        )
+module Dropdown exposing
+    ( Dropdown, Event(..), Msg, Settings
+    , defaultSettings, init, initWithSettings, update, view
+    )
 
 {-| This library provides a dropdown that handles items of any type `t`.
 Items are not part of this component's internal model, meaning that there is a
@@ -32,32 +24,44 @@ an Event that contains the selected item.
 
 import Html exposing (Html, a, button, div, li, span, text, ul)
 import Html.Attributes exposing (class)
-import Html.Events exposing (onBlur, onClick, onWithOptions)
-import Json.Decode
+import Html.Events exposing (custom, onBlur, onClick)
+import Json.Decode as Json
 
 
-{-| @docs Opaque type representing messages used to change internal state.
+{-|
+
+@docs Opaque type representing messages used to change internal state.
+
 -}
 type Msg t
     = Toggle State
     | Select t
 
 
-{-| @docs Events that are used to communicate changes in state relevant to
-users of this component.
+{-|
+
+@docs Events that are used to communicate changes in state relevant to
+@docs users of this component.
+
 -}
 type Event t
     = Unchanged
     | ItemSelected t
 
 
-{-| @docs The Dropdown (opaque) model.
+{-|
+
+@docs The Dropdown (opaque) model.
+
 -}
 type Dropdown
     = Dropdown Model
 
 
-{-| @docs Customization settings.
+{-|
+
+@docs Customization settings.
+
 -}
 type alias Settings =
     { placeHolder : String
@@ -87,7 +91,10 @@ type alias Model =
     }
 
 
-{-| @docs Initialize a Dropdown with default settings.
+{-|
+
+@docs Initialize a Dropdown with default settings.
+
 -}
 init : Dropdown
 init =
@@ -97,7 +104,10 @@ init =
         }
 
 
-{-| @docs Initialize a Dropdown with custom settings.
+{-|
+
+@docs Initialize a Dropdown with custom settings.
+
 -}
 initWithSettings : Settings -> Dropdown
 initWithSettings settings =
@@ -107,7 +117,10 @@ initWithSettings settings =
         }
 
 
-{-| @docs Default look and feel settings.
+{-|
+
+@docs Default look and feel settings.
+
 -}
 defaultSettings : Settings
 defaultSettings =
@@ -133,9 +146,12 @@ toggle state =
             Opened
 
 
-{-| @docs Update a Dropdown. Returns the updated Dropdown and an Event
-that communicates changes that are relevant to the outside world, if
-any (e.g. item selection).
+{-|
+
+@docs Update a Dropdown. Returns the updated Dropdown and an Event
+@docs that communicates changes that are relevant to the outside world, if
+@docs any (e.g. item selection).
+
 -}
 update : Msg t -> Dropdown -> ( Dropdown, Event t )
 update msg (Dropdown model) =
@@ -151,8 +167,11 @@ update msg (Dropdown model) =
             )
 
 
-{-| @docs Render a Dropdown using provided items, optional selected item, and
-function that returns a string representation of an item.
+{-|
+
+@docs Render a Dropdown using provided items, optional selected item, and
+@docs function that returns a string representation of an item.
+
 -}
 view : List t -> Maybe t -> (t -> String) -> Dropdown -> Html (Msg t)
 view items selectedItem descriptionOf (Dropdown { settings, state }) =
@@ -185,34 +204,32 @@ view items selectedItem descriptionOf (Dropdown { settings, state }) =
                 )
                 items
     in
-        div
-            [ class clazz ]
-            [ button
-                [ class settings.buttonClass
-                , onClick (Toggle newState)
-                , onBlur (Toggle Closed)
-                ]
-                [ text
-                    (selectedItem
-                        |> Maybe.map descriptionOf
-                        |> Maybe.withDefault settings.placeHolder
-                    )
-                , span [ class arrow ] []
-                ]
-            , ul
-                [ class settings.menuClass
-                ]
-                menuItems
+    div
+        [ class clazz ]
+        [ button
+            [ class settings.buttonClass
+            , onClick (Toggle newState)
+            , onBlur (Toggle Closed)
             ]
+            [ text
+                (selectedItem
+                    |> Maybe.map descriptionOf
+                    |> Maybe.withDefault settings.placeHolder
+                )
+            , span [ class arrow ] []
+            ]
+        , ul
+            [ class settings.menuClass
+            ]
+            menuItems
+        ]
 
 
 onItem : String -> msg -> Html.Attribute msg
-onItem ev =
-    Json.Decode.succeed
-        >> onWithOptions ev
-            { preventDefault = False
-            , stopPropagation = True
-            }
+onItem ev msg =
+    Json.succeed msg
+        |> Json.map (\value -> { message = value, preventDefault = False, stopPropagation = True })
+        |> custom ev
 
 
 viewItem : t -> (t -> String) -> Bool -> String -> String -> Html (Msg t)
@@ -221,12 +238,13 @@ viewItem item descriptionOf active itemClass activeItemClass =
         attrs =
             if active then
                 [ class activeItemClass ]
+
             else
                 [ class itemClass ]
     in
-        li
-            attrs
-            [ a
-                [ onItem "mousedown" (Select item) ]
-                [ text (descriptionOf item) ]
-            ]
+    li
+        attrs
+        [ a
+            [ onItem "mousedown" (Select item) ]
+            [ text (descriptionOf item) ]
+        ]
