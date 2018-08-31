@@ -1,3 +1,5 @@
+[![Elm package](https://img.shields.io/elm-package/v/fedragon/elm-typed-dropdown.svg)](https://github.com/fedragon/elm-typed-dropdown/releases)
+
 # elm-typed-dropdown
 
 This library provides a dropdown that can deal with items of any arbitrary type `t`. Items are not part of this component's internal model, meaning that there is a single source of truth: your own `Model`.
