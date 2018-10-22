@@ -12,7 +12,7 @@ It sets the selected item by value, rather than by index, which can be useful wh
 - Items are not part of internal component model
 - Item selected by value, rather than by index
 - User selection communicated via `Event`
-- Style can be customized by providing `Settings`
+- Styles can be customized by providing `Settings`
 
 ## Usage
 
@@ -82,11 +82,12 @@ view model =
         ]
 ```
 
-See `examples` folder for complete usage examples. You can find the minimal set of styles that should be applied to the dropdown in provided `dropdown.css`.
+Have a look at the `examples` folder to get a running example.
 
-### Customize style
+### A note about CSS styles
 
-Use `Dropdown.initWithSettings` rather than `init` if you want to use your own styles rather than the default ones.
+The default style classes are based on [Bootstrap 3.3.7]("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"), with some minor additions included in `dropdown.css`: both be imported in your HTML **separately** (if you'd rather import them directly in your Elm code, I suggest you to have a look at https://github.com/massung/elm-css and see how it can be done in `Example.elm`). 
+If you'd rather use different classes or change style altogether, you can provide your own `Settings` by using `Dropdown.initWithSettings` instead of `Dropdown.init`.
 
 ## Credits
 
